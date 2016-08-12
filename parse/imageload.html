@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <title>Todo App Built on Parse</title>
+  <meta name="description" content="My Parse App">
+  <meta name="viewport" content="width=device-width">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="http://yui.yahooapis.com/3.6.0/build/yui/yui-min.js"></script>
+  <script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.0.19.min.js"></script>
+  <script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.0.19.min.js"></script>
+  <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script>
+  <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="//www.parsecdn.com/js/parse-1.4.2.min.js"></script>
+</head>
+
+
+<body>
+
+
+<div>
+  <input type="text" id="list-input" placeholder="Enter a todo here...">
+  <br>
+  <br>
+  <input type="file" id="load">
+  <br>
+  <br>
+  <input type="button" name="Upload" text="upload" id="button">Upload image</input>
+  <br>
+  <br>
+</div>
+
+<br><br><br><br>
+
+<div>
+  <input type="text" id="search"   placeholder="Search">
+  <br><br>
+  <input type="button" name="Retrieve"  text="retrieve" id="show">retrieve image</input>
+</div>
+
+<br><br><br><br>
+
+<div>  
+  <input type="text" id="regus"   placeholder="register username">
+  <br><br>
+  <input type="text" id="regps"   placeholder="register password">
+  <br><br>
+  <input type="text" id="regem"   placeholder="register email">
+  <br><br>
+  <input type="text" id="regmo"   placeholder="register mobile">
+  <br><br>
+  <input type="button" name="Retrieve"  text="retrieve" id="create">create</input>
+  <br><br>
+</div>
+
+<br><br><br><br>
+
+<div>
+  <input type="text" id="logus"   placeholder="login username">
+  <br><br>
+  <input type="text" id="logps"   placeholder="login password">
+  <br><br>
+  <input type="button" name="Retrieve"  text="retrieve" id="login">login</input>
+  <br><br>
+</div>
+
+<br><br><br><br>
+
+<div>
+  <input type="text" id="resem"   placeholder="reset email">
+  <br><br>
+  <input type="button" name="Retrieve"  text="retrieve" id="reset">reset password</input>
+  <br><br>
+</div>
+
+<br><br><br><br>
+
+<div>
+  <br>
+   <input type="button" name="Retrieve"  text="retrieve" id="fblogin">facebook</input>
+  <br>
+</div>
+
+<div>
+  <br>
+   <input type="button" name="Retrieve"  text="retrieve" id="twlogin">twitter</input>
+  <br>
+</div>
+
+<div>
+  <br>
+   <input type="button" name="Retrieve"  text="retrieve" id="logout">logout</input>
+  <br>
+</div>
+
+
+<div>
+  <br>
+  <img class ="image-show" id="image-show" />
+  <br>
+</div>
+
+ <script type="text/javascript">
+
+  $(function(){
+
+$("#button").click(function(){
+
+var text = document.getElementById("list-input");
+
+y = text.value,
+console.log(y),
+console.log("ankit")
+
+Parse.initialize("rMO1av4i6mKAGP4GXDFnucWNrW3QwTMbqtxDCwCw", "6dYMlP1JbsoNRPN74WqZgVCOj7P15dY01IzLmq0g");
+    
+
+var base64 = "V29ya2luZyBhdCBQYXJzZSBpcyBncmVhdCE=";
+
+var file = new Parse.File("stores1.jpg", { base64: base64 });
+
+ var fileUploadControl = $("#load")[0];
+   if (fileUploadControl.files.length > 0) {
+   var file = fileUploadControl.files[0];
+   var name = "stores1.jpg";
+
+   var parseFile = new Parse.File(name, file);
+
+   //put this inside if {
+   parseFile.save().then(function() {
+   // The file has been saved to Parse.
+
+   console.log(123);
+   }, function(error) {
+   // The file either could not be read, or could not be saved to Parse.
+    });
+
+
+    // Be sure of ur parameters name
+    // prod is extend of my class in parse from this: var prod = new products();
+  var Products = Parse.Object.extend("products");
+  var products = new Products();
+
+
+  products.save(null, {
+          success: function(products) {
+          },
+          error: function(products, error) {
+         //   alert("Error when saving Todos: " + error.code + " " + error.message);
+          }
+        });
+
+
+    products.set("content", y);
+  
+    products.set("picture", parseFile);
+    products.save();
+
+   }
+
+
+
+});
+ 
+
+});
+
+   
+</script>
+
+
+
+ <script type="text/javascript">
+
+  $(function(){
+
+
+$("#show").click(function(){
+
+Parse.initialize("rMO1av4i6mKAGP4GXDFnucWNrW3QwTMbqtxDCwCw", "6dYMlP1JbsoNRPN74WqZgVCOj7P15dY01IzLmq0g");
+    
+
+   
+
+    var products = Parse.Object.extend("products");
+    var query = new Parse.Query(products);
+    
+    var content1 = self.$("#search").val();
+    query.equalTo("content", content1);
+    query.find({
+    success: function(products) {
+    alert("Successfully retrieved " + products.length + ".");
+
+
+
+        imageURLs = [];  
+
+   for (var i = 0; i < products.length; i++) {
+  var object = products[i];
+  var imageFile = object.get('picture');
+ 
+  var imageURL = imageFile.url();
+
+
+  var img = document.createElement("img");
+  img.src = imageURL;
+  var src = document.getElementById("image-show");
+  src.appendChild(img);
+ //var img = document.getElementById('image-show');
+ 
+ //document.getElementById('image-show').src= imageURL;
+ //$("#image-view")[i].src = imageURL;
+//img.appendChild(imageURL);
+
+//document.body.appendChild(imageURL);
+
+}
+    },
+  error: function(error) {
+    alert("Error: " + error.code + " " + error.message);
+  }
+
+
+
+
+
+});
+ 
+
+
+
+
+});
+
+
+});
+
+
+   
+</script>
+
+
+
+<script type="text/javascript">
+
+$(function(){
+
+
+$("#create").click(function(){
+
+Parse.initialize("0sOweepymfoUjBCyJblqYj5SxTGYiqrsCd9msdsV", "oE5K82MDycwfyO1EMuz6medvU3OTw1EQavaX2hTW");
+
+
+    var input1 = document.getElementById("regus");
+      x =input1.value,
+      console.log(x),
+     input2 = document.getElementById("regps");
+      y=input2.value,
+      console.log(y),
+     input3 = document.getElementById("regem");
+      l =input3.value,
+      console.log(l),
+     input4 = document.getElementById("regmo");
+      m=input4.value,
+      console.log(m)
+
+
+var products = new Parse.User();
+products.set("username", x);
+products.set("password", y);
+products.set("email", l);
+
+// other fields can be set just like with Parse.Object
+products.set("phone", m);
+
+products.signUp(null, {
+  success: function(user) {
+    console.log( "Hooray! Let them use the app now.");
+  },
+  error: function(user, error) {
+    // Show the error message somewhere and let the user try again.
+    alert("Error: " + error.code + " " + error.message);
+  }
+});
+
+});
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+$(function(){
+
+
+$("#login").click(function(){
+
+Parse.initialize("0sOweepymfoUjBCyJblqYj5SxTGYiqrsCd9msdsV", "oE5K82MDycwfyO1EMuz6medvU3OTw1EQavaX2hTW");
+
+
+    var input1 = document.getElementById("logus");
+      x =input1.value,
+      console.log(x),
+     input2 = document.getElementById("logps");
+      y=input2.value,
+      console.log(y)
+
+
+      Parse.User.logIn(x, y, {
+  success: function(user) {
+    console.log(" Do stuff after successful login.");
+  },
+  error: function(user, error) {
+    // The login failed. Check error to see why.
+  }
+});
+
+});
+});
+</script>
+
+
+
+<script type="text/javascript">
+
+$(function(){
+
+
+$("#reset").click(function(){
+
+Parse.initialize("0sOweepymfoUjBCyJblqYj5SxTGYiqrsCd9msdsV", "oE5K82MDycwfyO1EMuz6medvU3OTw1EQavaX2hTW");
+
+
+    var input1 = document.getElementById("resem");
+      x =input1.value,
+      console.log(x),
+
+
+      Parse.User.requestPasswordReset(x, {
+  success: function() {
+  // Password reset request was sent successfully
+  },
+  error: function(error) {
+    // Show the error message somewhere
+    alert("Error: " + error.code + " " + error.message);
+  }
+});
+
+});
+});
+</script>
+
+<script type="text/javascript">
+$(function(){
+
+
+Parse.initialize("rMO1av4i6mKAGP4GXDFnucWNrW3QwTMbqtxDCwCw", "6dYMlP1JbsoNRPN74WqZgVCOj7P15dY01IzLmq0g");
+    
+$("#logout").click(function(){
+Parse.User.logOut();
+var currentUser = Parse.User.current();
+console.log("You have been logeed out");
+});
+});
+
+
+</script>
+
+
+<div id="fb-root"></div>
+<script type="text/javascript">
+
+$(function(){
+
+
+window.fbAsyncInit = function() {
+    // init the FB JS SDK
+    Parse.FacebookUtils.init({
+      appId      : '1426305264363680', // Facebook App ID
+      status     : false,  // check Facebook Login status
+      cookie     : true,  // enable cookies to allow Parse to access the session
+      xfbml      : true,  // initialize Facebook social plugins on the page
+      version    : 'v2.3' 
+    });
+
+$("#fblogin").click(function(){
+Parse.initialize("0sOweepymfoUjBCyJblqYj5SxTGYiqrsCd9msdsV", "oE5K82MDycwfyO1EMuz6medvU3OTw1EQavaX2hTW");
+
+  
+
+console.log("signeddffd upp");
+       Parse.FacebookUtils.logIn("user_likes,email", {
+            success: function(user) {
+                if (!user.existed()) {
+
+                    alert("User signed up and logged in through Facebook!");
+                    console.log("signed upp");
+                    console.log(user.facebook);
+                } else {
+
+                   alert("User logged in through Facebook!");
+                  console.log(user.facebook);
+
+                }
+            },
+            error: function(user, error) {
+                alert("User cancelled the Facebook login or did not fully authorize.");
+
+            }
+        });
+  });
+};
+
+  // Load the SDK asynchronously
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/es_LA/all.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+
+
+
+});
+</script>
+
+
+
+<script type="text/javascript">
+
+$(function(){
+/*
+
+window.fbAsyncInit = function() {
+    // init the FB JS SDK
+    Parse.FacebookUtils.init({
+      appId      : '1426305264363680', // Facebook App ID
+      status     : false,  // check Facebook Login status
+      cookie     : true,  // enable cookies to allow Parse to access the session
+      xfbml      : true,  // initialize Facebook social plugins on the page
+      version    : 'v2.3' 
+    });
+*/
+$("#twlogin").click(function(){
+Parse.initialize("0sOweepymfoUjBCyJblqYj5SxTGYiqrsCd9msdsV", "oE5K82MDycwfyO1EMuz6medvU3OTw1EQavaX2hTW");
+
+  
+
+console.log("signeddffd upp");
+       Parse.twitterUtils.logIn(null, {
+            success: function(user) {
+                if (!user.existed()) {
+
+                    alert("User signed up and logged in through Facebook!");
+                    console.log("signed upp");
+
+                } else {
+
+                    alert("User logged in through Facebook!");
+
+
+                }
+            },
+            error: function(user, error) {
+                alert("User cancelled the Facebook login or did not fully authorize.");
+
+            }
+        });
+  });
+//};
+
+/*  // Load the SDK asynchronously
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/es_LA/all.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+
+*/
+
+});
+</script>
+
+</body>
+
+</html>

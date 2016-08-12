@@ -1,0 +1,45 @@
+<!doctype html>
+<html ng-app="myApp">
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+    <script src="https://cdn.firebase.com/js/client/2.2.1/firebase.js"></script>
+    <script src="https://cdn.firebase.com/libs/angularfire/1.0.0/angularfire.min.js"></script>
+    <link rel="stylesheet" href="/resources/tutorial/css/example.css"/>
+  </head>
+
+  <body ng-controller="MyCtrl">
+
+   
+
+    
+  <input type="file" ng-file-select="onFileSelect($files)" multiple>
+
+
+
+    
+
+    <script type="text/javascript">
+//inject angular file upload directive.
+angular.module('myApp', ['angularFileUpload']);
+
+var MyCtrl = [ '$scope', '$upload', function($scope, $upload) {
+  $scope.onFileSelect = function($files) {
+    //$files: an array of files selected, each file has name, size, and type.
+    for (var i = 0; i < $files.length; i++) {
+      var $file = $files[i];
+      $upload.upload({
+        url: 'https://brilliant-torch-9921.firebaseio.com/',
+        file: $file,
+        progress: function(e){}
+      }).then(function(data, status, headers, config) {
+        // file is uploaded successfully
+        console.log(data);
+      }); 
+    }
+  }
+}];
+
+
+    </script>
+  </body>
+</html>
